@@ -16,7 +16,7 @@ func buildPlugin(goFileName string) (string, error) {
 		"build",
 		"-buildmode=plugin",
 		"-o",
-		MigrationTargetFolder+"/"+pluginName,
+		MigrationTargetFolder+"/.plugins/"+pluginName,
 		MigrationTargetFolder+"/"+goFileName,
 	)
 
@@ -28,7 +28,7 @@ func buildPlugin(goFileName string) (string, error) {
 }
 
 func getMigration(pluginName string) (Migration, error) {
-	plug, err := plugin.Open(MigrationTargetFolder + "/" + pluginName)
+	plug, err := plugin.Open(MigrationTargetFolder + "/.plugins/" + pluginName)
 	if err != nil {
 		return nil, errors.Wrap(err, "Open plugin filed.")
 	}
@@ -48,7 +48,7 @@ func getMigration(pluginName string) (Migration, error) {
 
 func removePlugin(goFileName string) error {
 	pluginName := strings.Replace(goFileName, ".go", ".so", -1)
-	return os.Remove(MigrationTargetFolder + "/" + pluginName)
+	return os.Remove(MigrationTargetFolder + "/.plugins/" + pluginName)
 }
 
 // MigrationTargetFolder is the migration folder target.
