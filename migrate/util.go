@@ -16,6 +16,12 @@ func checkPluginExists(pluginName string) bool {
 
 func buildPlugin(goFileName string) (string, error) {
 	pluginName := strings.Replace(goFileName, ".go", ".so", -1)
+
+	// Skip build plugin when exists.
+	if checkPluginExists(pluginName) {
+		return pluginName, nil
+	}
+
 	cmd := exec.Command(
 		"go",
 		"build",
