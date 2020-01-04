@@ -9,6 +9,11 @@ import (
 	"github.com/pkg/errors"
 )
 
+func checkPluginExists(pluginName string) bool {
+	_, err := os.Stat(MigrationTargetFolder + "/.plugins/" + pluginName)
+	return !os.IsNotExist(err)
+}
+
 func buildPlugin(goFileName string) (string, error) {
 	pluginName := strings.Replace(goFileName, ".go", ".so", -1)
 	cmd := exec.Command(
