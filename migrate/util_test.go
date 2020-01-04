@@ -8,9 +8,10 @@ import (
 )
 
 const n = "test_for_build_plugin.go"
+const s = "test_for_build_plugin.so"
 
 func TestMain(m *testing.M) {
-	MigrationTargetFolder = "./"
+	MigrationTargetFolder = "."
 
 	t := MigrationTargetFolder + "/" + n
 
@@ -57,8 +58,8 @@ func TestBuildPlugin(t *testing.T) {
 	p, err := buildPlugin(n)
 
 	assert.NoError(t, err)
-	assert.Equal(t, "test_for_build_plugin.so", p, "should return builded file name which contains .so as ext")
+	assert.Equal(t, s, p, "should return builded file name which contains .so as ext")
 
-	_, err = os.Stat(MigrationTargetFolder + "/.plugins/test_for_build_plugin.so")
+	_, err = os.Stat(MigrationTargetFolder + "/.plugins/" + s)
 	assert.Equal(t, false, os.IsNotExist(err), "the compiled plugin file should exists")
 }
