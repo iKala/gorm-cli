@@ -41,6 +41,18 @@ func TestMain(m *testing.M) {
 	os.Exit(exitVal)
 }
 
+func TestCheckPluginExists(t *testing.T) {
+	path := MigrationTargetFolder + "/.plugins/" + s
+	assert.False(t, checkPluginExists(s), "should return false when there is no plugin file exists")
+
+	os.MkdirAll(MigrationTargetFolder+"/.plugins", 0755)
+	os.Create(path)
+
+	assert.True(t, checkPluginExists(s), "should return true since the plugin file exists")
+
+	os.Remove(path)
+}
+
 func TestBuildPlugin(t *testing.T) {
 	p, err := buildPlugin(n)
 
