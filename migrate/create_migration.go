@@ -8,14 +8,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-func fileExists(filename string) bool {
-	info, err := os.Stat(filename)
-	if os.IsNotExist(err) {
-		return false
-	}
-	return !info.IsDir()
-}
-
 // CreateMigration - Create the migration file with template.
 func CreateMigration(purpose string) (string, error) {
 	if purpose == "" {
