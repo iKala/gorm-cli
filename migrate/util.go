@@ -46,19 +46,28 @@ func buildPlugin(goFileName string) (string, error) {
 	return pluginName, nil
 }
 
-func getMigration(pluginName string) (Migration, error) {
+func getPlugin(pluginName string, symbolTarget string) (plugin.Symbol, error) {
 	plug, err := plugin.Open(MigrationTargetFolder + "/.plugins/" + pluginName)
 	if err != nil {
 		return nil, errors.Wrap(err, "Open plugin filed.")
 	}
 
-	symMigration, err := plug.Lookup("Migration")
+	s, err := plug.Lookup(symbolTarget)
 	if err != nil {
-		return nil, errors.Wrap(err, "Migration wrong format - missing Migration declaration.")
+		return nil, errors.Wrap(err, symbolTarget+"wrong format - missing "+symbolTarget+" declaration.")
+	}
+
+	return s, nil
+}
+
+func getMigration(pluginName string) (Migration, error) {
+	s, err := getPlugin(pluginName, "Migration")
+	if err != nil {
+		return nil, err
 	}
 
 	var migration Migration
-	migration, ok := symMigration.(Migration)
+	migration, ok := s.(Migration)
 	if !ok {
 		return nil, errors.Wrap(err, "Unexpected type from module symbol.")
 	}
