@@ -1,0 +1,7 @@
+db:
+  host: localhost
+  dialects: mysql
+  user: root
+  password: password
+  dbname: hentai
+  charset: utf8mb4
