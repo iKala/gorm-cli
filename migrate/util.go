@@ -76,6 +76,11 @@ func getMigration(pluginName string) (Migration, error) {
 
 func removePlugin(goFileName string) error {
 	pluginName := strings.Replace(goFileName, ".go", ".so", -1)
+
+	if !checkPluginExists(pluginName) {
+		return nil
+	}
+
 	return os.Remove(MigrationTargetFolder + "/.plugins/" + pluginName)
 }
 
