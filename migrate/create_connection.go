@@ -35,7 +35,6 @@ import (
 // NewDB - Get gorm DB instance.
 func NewDB() (*gorm.DB, error) {
 	db, err := gorm.Open("{{.DB.Dialects}}", "{{.DB.User}}:{{.DB.Password}}@tcp({{.DB.Host}})/{{.DB.Dbname}}?charset={{.DB.Charset}}&parseTime=True&loc=Local")
-  defer db.Close()
 	return db, err
 }`
 
