@@ -9,29 +9,17 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Connection is the config for how gorm-cli connecting to DB
-type Connection struct {
-	DB struct {
-		Dialects string
-		Host     string
-		User     string
-		Password string
-		Dbname   string
-		Charset  string
-	}
-}
-
 type tmplData struct {
-	Connection
+	GormCliConfig
 	DialectString string
 }
 
 // CreateConnection - Create the migration file with template.
-func CreateConnection(c Connection) (string, error) {
+func CreateConnection(c GormCliConfig) (string, error) {
 	// Create migration folder anyway.
 	_ = os.Mkdir(MigrationTargetFolder, os.ModePerm)
 
-	data := tmplData{Connection: c}
+	data := tmplData{GormCliConfig: c}
 	if c.DB.Dialects == "mysql" {
 		data.DialectString = `_ "github.com/jinzhu/gorm/dialects/mysql"`
 	}

@@ -4,6 +4,21 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+// GormCliConfig is the config for how gorm-cli connecting to DB
+type GormCliConfig struct {
+	DB struct {
+		Dialects string
+		Host     string
+		User     string
+		Password string
+		Dbname   string
+		Charset  string
+	}
+	Migration struct {
+		Path string
+	}
+}
+
 // Migration - The main interface for migration files
 type Migration interface {
 	Up(*gorm.DB) error
