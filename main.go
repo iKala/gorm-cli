@@ -98,5 +98,7 @@ func main() {
 			return
 		}
 		fmt.Println("Migration created.", fileName)
+	default:
+		fmt.Println("No matched action. (db:init / db:migrate / db:rollback / db:create_migration)")
 	}
 }
