@@ -5,3 +5,6 @@ db:
   password: password
   dbname: hentai
   charset: utf8mb4
+
+migration:
+  path: ./migration
