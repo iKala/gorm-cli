@@ -11,38 +11,37 @@ import (
 )
 
 func main() {
-	migrate.MigrationTargetFolder = "./migration"
-
 	path, err := os.Getwd()
+	bytes, err := ioutil.ReadFile(path + "/.gorm-cli.yaml")
+	if err != nil {
+		fmt.Println(".gorm-cli.yaml not exists, you must create one for gorm-cli connecting to DB. https://github.com/iKala/gorm-cli/blob/master/README.md")
+		return
+	}
+
+	c := migrate.GormCliConfig{}
+	if err := yaml.Unmarshal(bytes, &c); err != nil {
+		fmt.Println("Failed to parse .gorm-cli.yaml, might be syntax error. https://github.com/iKala/gorm-cli/blob/master/.gorm-cli.yaml")
+		return
+	}
+	migrate.MigrationTargetFolder = c.Migration.Path
+
 	if err != nil {
 		fmt.Println("Something wrong when getting current path.")
 		return
 	}
 
 	if len(os.Args) == 1 {
-		fmt.Println("Option of migration is needed - (db:init db:migrate / db:rollback / db:create_migration)")
+		fmt.Println("Option of migration is needed - (db:init / db:migrate / db:rollback / db:create_migration)")
 		return
 	}
 
 	var migrateAction string
 	if migrateAction = os.Args[1]; migrateAction == "" {
-		fmt.Println("Empty option is not allowed - (db:init db:migrate / db:rollback / db:create_migration)")
+		fmt.Println("Empty option is not allowed - (db:init / db:migrate / db:rollback / db:create_migration)")
 		return
 	}
 	if migrateAction == "db:init" {
-		bytes, err := ioutil.ReadFile(path + "/.gorm-cli.yaml")
-		if err != nil {
-			fmt.Println(".gorm-cli.yaml not exists, you must create one for gorm-cli connecting to DB. https://github.com/iKala/gorm-cli/blob/master/README.md")
-			return
-		}
-
-		connection := migrate.Connection{}
-		if err := yaml.Unmarshal(bytes, &connection); err != nil {
-			fmt.Println("Failed to parse .gorm-cli.yaml, might be syntax error. https://github.com/iKala/gorm-cli/blob/master/.gorm-cli.yaml")
-			return
-		}
-
-		fileName, err := migrate.CreateConnection(connection)
+		fileName, err := migrate.CreateConnection(c)
 		if err != nil {
 			fmt.Println("Initiail connection file failed.")
 			return
