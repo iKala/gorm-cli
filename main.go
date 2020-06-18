@@ -43,7 +43,7 @@ func main() {
 	if migrateAction == "db:init" {
 		fileName, err := migrate.CreateConnection(c)
 		if err != nil {
-			fmt.Println("Initiail connection file failed.")
+			fmt.Println("Initiail connection file failed.", err)
 			return
 		}
 
