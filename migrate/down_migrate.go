@@ -27,7 +27,7 @@ func DownMigration(db *gorm.DB, files []os.FileInfo, step int64) error {
 	}
 
 	var metas []GormMeta
-	db.Order("ID desc").Limit(step).Find(&metas)
+	db.Order("ID desc").Limit(int(step)).Find(&metas)
 
 	for i, meta := range metas {
 		pluginName, err := buildPlugin(meta.Name)
