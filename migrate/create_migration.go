@@ -21,7 +21,7 @@ func CreateMigration(purpose string) (string, error) {
 		`package main
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 type migration string

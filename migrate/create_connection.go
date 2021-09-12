@@ -21,14 +21,14 @@ func CreateConnection(c GormCliConfig) (string, error) {
 
 	data := tmplData{GormCliConfig: c}
 	if c.DB.Dialects == "mysql" {
-		data.DialectString = `_ "github.com/jinzhu/gorm/dialects/mysql"`
+		data.DialectString = `"gorm.io/driver/mysql"`
 	}
 
 	connectionTemplate :=
 		`package main
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 	{{.DialectString}}
 )
 

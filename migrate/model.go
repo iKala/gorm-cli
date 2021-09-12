@@ -1,7 +1,7 @@
 package migrate
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 // GormCliConfig is the config for how gorm-cli connecting to DB

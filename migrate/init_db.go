@@ -1,7 +1,7 @@
 package migrate
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 // NewDB get gorm DB instance.

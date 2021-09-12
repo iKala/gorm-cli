@@ -5,9 +5,9 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/jinzhu/gorm"
 	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
+	"gorm.io/gorm"
 )
 
 // DownMigration - Rollback migration

@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
+	"gorm.io/gorm"
 )
 
 // UpMigrate - Run migration
