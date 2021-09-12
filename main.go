@@ -78,7 +78,6 @@ func main() {
 	}
 
 	db := migrate.NewDB()
-	defer db.Close()
 
 	db.AutoMigrate(&migrate.GormMeta{})
 
