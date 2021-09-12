@@ -46,7 +46,7 @@ func DownMigration(db *gorm.DB, files []os.FileInfo, step int64) error {
 		}
 
 		fmt.Println("Rollbacked.", i, meta.Name)
-		if err := db.Delete(meta).Error; err != nil {
+		if err := db.Delete(&meta).Error; err != nil {
 			return err
 		}
 
