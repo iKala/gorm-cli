@@ -8,6 +8,7 @@ import (
 type GormCliConfig struct {
 	DB struct {
 		Dialects string
+		Port     string
 		Host     string
 		User     string
 		Password string

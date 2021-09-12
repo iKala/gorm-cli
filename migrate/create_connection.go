@@ -12,6 +12,7 @@ import (
 type tmplData struct {
 	GormCliConfig
 	DialectString string
+	Port          string
 }
 
 // CreateConnection - Create the migration file with template.
@@ -24,6 +25,10 @@ func CreateConnection(c GormCliConfig) (string, error) {
 		data.DialectString = `"gorm.io/driver/mysql"`
 	}
 
+	if c.DB.Port == "" {
+		data.Port = "3306"
+	}
+
 	connectionTemplate :=
 		`package main
 
@@ -34,7 +39,8 @@ import (
 
 // NewDB - Get gorm DB instance.
 func NewDB() (*gorm.DB, error) {
-	db, err := gorm.Open("{{.DB.Dialects}}", "{{.DB.User}}:{{.DB.Password}}@tcp({{.DB.Host}})/{{.DB.Dbname}}?charset={{.DB.Charset}}&parseTime=True&loc=Local")
+	dsn := "{{.DB.User}}:{{.DB.Password}}@tcp({{.DB.Host}}:{{.Port}})/{{.DB.Dbname}}?charset={{.DB.Charset}}&parseTime=True&loc=Local"
+	db, err := gorm.Open({{.DB.Dialects}}.Open(dsn), &gorm.Config{})
 	return db, err
 }`
 
