@@ -39,6 +39,8 @@ func BuildPlugin(goFileName string) (string, error) {
 		MigrationTargetFolder+"/"+goFileName,
 	)
 
+	cmd.Env = os.Environ()
+
 	if err := cmd.Run(); err != nil {
 		return "", err
 	}
