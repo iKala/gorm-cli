@@ -1,10 +1,10 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
-	"reflect"
 	"strconv"
 	"strings"
 
@@ -62,18 +62,19 @@ func main() {
 
 	if migrateAction == "db:init" {
 		// Parse yaml setting when got non of env
-		if reflect.DeepEqual(c, migrate.GormCliConfig{}) {
-			path, err := os.Getwd()
-			if err != nil {
-				fmt.Println("Something wrong when getting current path.")
-				return
-			}
+		path, err := os.Getwd()
+		if err != nil {
+			fmt.Println("Something wrong when getting current path.")
+			return
+		}
 
-			bytes, err := ioutil.ReadFile(path + "/.gorm-cli.yaml")
-			if err != nil {
-				fmt.Println(".gorm-cli.yaml not exists, you must create one for gorm-cli connecting to DB. https://github.com/iKala/gorm-cli/blob/master/README.md")
-				return
-			}
+		bytes, err := ioutil.ReadFile(path + "/.gorm-cli.yaml")
+		if err != nil && !errors.Is(err, os.ErrNotExist) {
+			fmt.Println("Load .gorm-cli.yaml failed", err)
+			return
+		}
+		// Load file without error, replace setting value with yaml config.
+		if err == nil {
 			if err := yaml.Unmarshal(bytes, &c); err != nil {
 				fmt.Println("Failed to parse .gorm-cli.yaml, might be syntax error. https://github.com/iKala/gorm-cli/blob/master/.gorm-cli.yaml")
 				return
