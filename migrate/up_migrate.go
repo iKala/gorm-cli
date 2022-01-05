@@ -12,7 +12,7 @@ import (
 // UpMigrate - Run migration
 func UpMigrate(db *gorm.DB, files []os.FileInfo) error {
 	for i, file := range files {
-		if !strings.HasSuffix(file.Name(), ".go") {
+		if file.Name() == "connection.so" || (!strings.HasSuffix(file.Name(), ".go") && !strings.HasSuffix(file.Name(), ".so")) {
 			continue
 		}
 		var meta GormMeta

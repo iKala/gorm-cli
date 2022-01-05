@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/iKala/gorm-cli/migrate"
 	"gopkg.in/yaml.v2"
@@ -31,16 +32,40 @@ func main() {
 	}
 
 	if len(os.Args) == 1 {
-		fmt.Println("Option of migration is needed - (db:init / db:migrate / db:rollback / db:create_migration)")
+		fmt.Println("Option of migration is needed - (db:prebuild / db:init / db:migrate / db:rollback / db:create_migration)")
 		return
 	}
 
 	var migrateAction string
 	if migrateAction = os.Args[1]; migrateAction == "" {
-		fmt.Println("Empty option is not allowed - (db:init / db:migrate / db:rollback / db:create_migration)")
+		fmt.Println("Empty option is not allowed - (db:prebuild / db:init / db:migrate / db:rollback / db:create_migration)")
 		return
 	}
-	if migrateAction == "db:init" {
+	if migrateAction == "db:prebuild" {
+		fileInfo, err := ioutil.ReadDir(migrate.MigrationTargetFolder)
+		if err != nil {
+			fmt.Println("Failed to read migrations", err)
+			return
+		}
+		for _, f := range fileInfo {
+			if !f.IsDir() && strings.HasSuffix(f.Name(), ".go") {
+				if err := migrate.RemovePlugin(f.Name()); err != nil {
+					fmt.Println("Failed to reset existed plugin", f.Name(), err)
+					return
+				}
+
+				createdFile, err := migrate.BuildPlugin(f.Name())
+				if err != nil {
+					fmt.Println("Failed to build plugin", f.Name(), err)
+					return
+				}
+
+				fmt.Println(createdFile, "created")
+			}
+		}
+	}
+
+	if migrateAction == "db:init" || migrateAction == "db:prebuild" {
 		fileName, err := migrate.CreateConnection(c)
 		if err != nil {
 			fmt.Println("Initiail connection file failed.", err)
@@ -71,10 +96,15 @@ func main() {
 		}
 	}
 
-	files, err := ioutil.ReadDir(migrate.MigrationTargetFolder)
-	if err != nil {
-		fmt.Println("Migration folder not exists.")
-		return
+	// Read prebuilt plugins first.
+	files, _ := ioutil.ReadDir(migrate.MigrationTargetFolder + "/.plugins")
+	if len(files) == 0 {
+		// Load go file when prebuilt plugins not exists.
+		files, err = ioutil.ReadDir(migrate.MigrationTargetFolder)
+		if err != nil {
+			fmt.Println("Migration folder not exists.")
+			return
+		}
 	}
 
 	db := migrate.NewDB()
@@ -98,6 +128,6 @@ func main() {
 		}
 		fmt.Println("Migration created.", fileName)
 	default:
-		fmt.Println("No matched action. (db:init / db:migrate / db:rollback / db:create_migration)")
+		fmt.Println("No matched action. (db:prebuild / db:init / db:migrate / db:rollback / db:create_migration)")
 	}
 }
