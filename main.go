@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"reflect"
 	"strconv"
 	"strings"
 
@@ -12,24 +13,16 @@ import (
 )
 
 func main() {
-	path, err := os.Getwd()
-	bytes, err := ioutil.ReadFile(path + "/.gorm-cli.yaml")
-	if err != nil {
-		fmt.Println(".gorm-cli.yaml not exists, you must create one for gorm-cli connecting to DB. https://github.com/iKala/gorm-cli/blob/master/README.md")
-		return
-	}
-
 	c := migrate.GormCliConfig{}
-	if err := yaml.Unmarshal(bytes, &c); err != nil {
-		fmt.Println("Failed to parse .gorm-cli.yaml, might be syntax error. https://github.com/iKala/gorm-cli/blob/master/.gorm-cli.yaml")
-		return
-	}
-	migrate.MigrationTargetFolder = c.Migration.Path
+	c.DB.Dialects = os.Getenv("DB_DIALECTS")
+	c.DB.Dbname = os.Getenv("DB_NAME")
+	c.DB.Host = os.Getenv("DB_HOST")
+	c.DB.User = os.Getenv("DB_USER")
+	c.DB.Password = os.Getenv("DB_PASSWORD")
+	c.DB.Port = os.Getenv("DB_PORT")
+	c.Migration.Path = os.Getenv("MIGRATION_PATH")
 
-	if err != nil {
-		fmt.Println("Something wrong when getting current path.")
-		return
-	}
+	migrate.MigrationTargetFolder = c.Migration.Path
 
 	if len(os.Args) == 1 {
 		fmt.Println("Option of migration is needed - (db:prebuild / db:init / db:migrate / db:rollback / db:create_migration)")
@@ -65,7 +58,25 @@ func main() {
 		}
 	}
 
-	if migrateAction == "db:init" || migrateAction == "db:prebuild" {
+	if migrateAction == "db:init" {
+		// Parse yaml setting when got non of env
+		if reflect.DeepEqual(c, migrate.GormCliConfig{}) {
+			path, err := os.Getwd()
+			if err != nil {
+				fmt.Println("Something wrong when getting current path.")
+				return
+			}
+
+			bytes, err := ioutil.ReadFile(path + "/.gorm-cli.yaml")
+			if err != nil {
+				fmt.Println(".gorm-cli.yaml not exists, you must create one for gorm-cli connecting to DB. https://github.com/iKala/gorm-cli/blob/master/README.md")
+				return
+			}
+			if err := yaml.Unmarshal(bytes, &c); err != nil {
+				fmt.Println("Failed to parse .gorm-cli.yaml, might be syntax error. https://github.com/iKala/gorm-cli/blob/master/.gorm-cli.yaml")
+				return
+			}
+		}
 		fileName, err := migrate.CreateConnection(c)
 		if err != nil {
 			fmt.Println("Initiail connection file failed.", err)
