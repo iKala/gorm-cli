@@ -64,10 +64,10 @@ func NewDB() (*gorm.DB, error) {
 		return "", errors.Wrap(err, "Create connection failed.")
 	}
 
-	if err := removePlugin(targetFileName); err != nil {
+	if err := RemovePlugin(targetFileName); err != nil {
 		return "", err
 	}
-	pluginFile, err := buildPlugin(targetFileName)
+	pluginFile, err := BuildPlugin(targetFileName)
 	if err != nil {
 		return "", err
 	}

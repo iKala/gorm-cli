@@ -55,7 +55,7 @@ func TestCheckPluginExists(t *testing.T) {
 }
 
 func TestBuildPlugin(t *testing.T) {
-	p, err := buildPlugin(n)
+	p, err := BuildPlugin(n)
 
 	assert.NoError(t, err)
 	assert.Equal(t, s, p, "should return builded file name which contains .so as ext")

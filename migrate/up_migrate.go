@@ -23,7 +23,7 @@ func UpMigrate(db *gorm.DB, files []os.FileInfo) error {
 			continue
 		}
 
-		pluginName, err := buildPlugin(file.Name())
+		pluginName, err := BuildPlugin(file.Name())
 		if err != nil {
 			return errors.Wrap(err, "Build plugin failed.")
 		}
