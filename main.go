@@ -31,7 +31,7 @@ func main() {
 			c.DB.User = os.Getenv("DB_USER")
 			c.DB.Password = os.Getenv("DB_PASSWORD")
 			c.DB.Port = os.Getenv("DB_PORT")
-			c.DB.Charset = os.Getenv("DB_CHARTSET")
+			c.DB.Charset = os.Getenv("DB_CHARSET")
 			c.Migration.Path = os.Getenv("MIGRATION_PATH")
 		} else {
 			fmt.Println("Load .gorm-cli.yaml failed", err)
