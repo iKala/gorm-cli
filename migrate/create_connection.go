@@ -72,8 +72,10 @@ func NewDB() (*gorm.DB, error) {
 		return "", err
 	}
 
-	if err := os.Remove(tmpFile); err != nil {
-		return "", errors.Wrap(err, "Remove temp file failed")
+	if os.Getenv("DEBUG_CONNECTION") != "true" {
+		if err := os.Remove(tmpFile); err != nil {
+			return "", errors.Wrap(err, "Remove temp file failed")
+		}
 	}
 
 	return pluginFile, nil
