@@ -1,5 +1,6 @@
 db:
   host: localhost
+  port: 3306
   dialects: mysql
   user: root
   password: password
