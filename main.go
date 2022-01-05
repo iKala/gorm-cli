@@ -15,7 +15,7 @@ import (
 func main() {
 	c := migrate.GormCliConfig{}
 	c.DB.Dialects = os.Getenv("DB_DIALECTS")
-	c.DB.Dbname = os.Getenv("DB_NAME")
+	c.DB.Dbname = os.Getenv("DB_DBNAME")
 	c.DB.Host = os.Getenv("DB_HOST")
 	c.DB.User = os.Getenv("DB_USER")
 	c.DB.Password = os.Getenv("DB_PASSWORD")
