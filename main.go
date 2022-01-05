@@ -111,6 +111,7 @@ func main() {
 	// Read prebuilt plugins first.
 	files, _ := ioutil.ReadDir(migrate.MigrationTargetFolder + "/.plugins")
 	if len(files) == 0 {
+		var err error
 		// Load go file when prebuilt plugins not exists.
 		files, err = ioutil.ReadDir(migrate.MigrationTargetFolder)
 		if err != nil {
