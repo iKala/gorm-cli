@@ -57,6 +57,7 @@ func main() {
 				fmt.Println(createdFile, "created")
 			}
 		}
+		return
 	}
 
 	if migrateAction == "db:init" {
