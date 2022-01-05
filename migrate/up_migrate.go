@@ -41,10 +41,6 @@ func UpMigrate(db *gorm.DB, files []os.FileInfo) error {
 		if err := db.Create(&GormMeta{Name: file.Name()}).Error; err != nil {
 			return err
 		}
-
-		if err := removePlugin(file.Name()); err != nil {
-			return errors.Wrap(err, "Remove plugin file failed.")
-		}
 	}
 
 	return nil

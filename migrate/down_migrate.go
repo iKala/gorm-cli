@@ -49,10 +49,6 @@ func DownMigration(db *gorm.DB, files []os.FileInfo, step int64) error {
 		if err := db.Delete(&meta).Error; err != nil {
 			return err
 		}
-
-		if err := removePlugin(meta.Name); err != nil {
-			return errors.Wrap(err, "Remove plugin file failed.")
-		}
 	}
 
 	return nil
