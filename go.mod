@@ -12,7 +12,6 @@ require (
 	golang.org/x/lint v0.0.0-20190301231843-5614ed5bae6f // indirect
 	golang.org/x/tools v0.0.0-20190312170243-e65039ee4138 // indirect
 	gopkg.in/alecthomas/kingpin.v3-unstable v3.0.0-20191105091915-95d230a53780 // indirect
-	gopkg.in/yaml.v2 v2.2.2
-	gorm.io/driver/mysql v1.1.2 // indirect
+	gopkg.in/yaml.v2 v2.2.8
 	gorm.io/gorm v1.21.15
 )
