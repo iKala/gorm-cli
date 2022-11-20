@@ -1,0 +1,36 @@
+##
+## Build
+##
+FROM golang:alpine AS build
+
+WORKDIR /
+
+RUN apk update && apk add musl-dev gcc
+
+COPY ./model ./model
+COPY ./go.mod ./
+COPY ./go.sum ./
+
+ARG DB_HOST
+ARG DB_DIALECTS
+ARG DB_USER
+ARG DB_PASSWORD
+ARG DB_DBNAME
+ARG DB_CHARSET
+
+ENV MIGRATION_PATH=/model/migration
+
+RUN go install github.com/iKala/gorm-cli@latest && go mod download
+RUN gorm-cli db:prebuild && gorm-cli db:init
+
+##
+## Deploy
+##
+FROM alpine
+
+COPY --from=build /model/migration/ /migration/
+COPY --from=build /go/bin/gorm-cli /go/bin/gorm-cli
+
+ENV MIGRATION_PATH=/migration
+
+CMD ["/go/bin/gorm-cli", "db:migrate"]
