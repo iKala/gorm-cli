@@ -1,17 +1,16 @@
 package migrate
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // CreateMigration - Create the migration file with template.
 func CreateMigration(purpose string) (string, error) {
 	if purpose == "" {
-		return "", errors.New("Missing purpose when creating migration")
+		return "", ErrEmptyPurpose
 	}
 
 	// Create migration folder anyway.
@@ -41,7 +40,7 @@ var Migration migration`
 	targetFileName := MigrationTargetFolder + "/" + time.Now().Format("20060102150405") + "_" + purpose + ".go"
 
 	if fileExists(targetFileName) {
-		return "", errors.New("Migration exists")
+		return "", ErrDuplicatedMigration
 	}
 
 	err := ioutil.WriteFile(
@@ -51,7 +50,7 @@ var Migration migration`
 	)
 
 	if err != nil {
-		return "", errors.Wrap(err, "Create migration failed.")
+		return "", fmt.Errorf("%v (%v)", "Create migration failed.", err.Error())
 	}
 
 	return targetFileName, nil

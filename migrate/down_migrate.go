@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/manifoldco/promptui"
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 )
 
@@ -23,11 +22,13 @@ func DownMigration(db *gorm.DB, files []os.FileInfo, step int64) error {
 	result, err := prompt.Run()
 
 	if err != nil || result != "Yes" {
-		return errors.New("Rollback migration canceled")
+		return ErrMigrationCanceled
 	}
 
 	var metas []GormMeta
-	db.Order("ID desc").Limit(int(step)).Find(&metas)
+	if err := db.Order("ID desc").Limit(int(step)).Find(&metas).Error; err != nil {
+		return err
+	}
 
 	for i, meta := range metas {
 		pluginName, err := BuildPlugin(meta.Name)
@@ -38,11 +39,11 @@ func DownMigration(db *gorm.DB, files []os.FileInfo, step int64) error {
 
 		migration, err := getMigration(pluginName)
 		if err != nil {
-			return errors.Wrap(err, "Load migration plugin failed")
+			return err
 		}
 
 		if err := migration.Down(db); err != nil {
-			return errors.Wrap(err, "Rollback failed."+meta.Name)
+			return err
 		}
 
 		fmt.Println("Rollbacked.", i, meta.Name)

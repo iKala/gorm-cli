@@ -5,7 +5,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/pkg/errors"
+	"errors"
+
 	"gorm.io/gorm"
 )
 
@@ -23,18 +24,22 @@ func UpMigrate(db *gorm.DB, files []os.FileInfo) error {
 			continue
 		}
 
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return err
+		}
+
 		pluginName, err := BuildPlugin(file.Name())
 		if err != nil {
-			return errors.Wrap(err, "Build plugin failed.")
+			return fmt.Errorf("%v (%v)", "Build plugin failed.", err.Error())
 		}
 
 		migration, err := getMigration(pluginName)
 		if err != nil {
-			return errors.Wrap(err, "Load migration plugin failed")
+			return fmt.Errorf("%v (%v)", "Load migration plugin failed", err.Error())
 		}
 
 		if err := migration.Up(db); err != nil {
-			return errors.Wrap(err, "Migrate failed."+file.Name())
+			return fmt.Errorf("%v (%v)", "Migrate failed."+file.Name(), err.Error())
 		}
 
 		fmt.Println("Migrated.", i, file.Name())

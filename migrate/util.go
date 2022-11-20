@@ -1,12 +1,11 @@
 package migrate
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"plugin"
 	"strings"
-
-	"github.com/pkg/errors"
 )
 
 func fileExists(filename string) bool {
@@ -51,12 +50,12 @@ func BuildPlugin(goFileName string) (string, error) {
 func getPlugin(pluginName string, symbolTarget string) (plugin.Symbol, error) {
 	plug, err := plugin.Open(MigrationTargetFolder + "/.plugins/" + pluginName)
 	if err != nil {
-		return nil, errors.Wrap(err, "Open plugin filed.")
+		return nil, fmt.Errorf("%v (%v)", "Open plugin filed.", err.Error())
 	}
 
 	s, err := plug.Lookup(symbolTarget)
 	if err != nil {
-		return nil, errors.Wrap(err, symbolTarget+"wrong format - missing "+symbolTarget+" declaration.")
+		return nil, fmt.Errorf("%v (%v)", symbolTarget+"wrong format - missing "+symbolTarget+" declaration.", err.Error())
 	}
 
 	return s, nil
@@ -71,7 +70,7 @@ func getMigration(pluginName string) (Migration, error) {
 	var migration Migration
 	migration, ok := s.(Migration)
 	if !ok {
-		return nil, errors.Wrap(err, "Unexpected type from module symbol.")
+		return nil, fmt.Errorf("%v (%v)", "Unexpected type from module symbol.", err.Error())
 	}
 	return migration, nil
 }
