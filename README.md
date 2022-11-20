@@ -1,7 +1,7 @@
 ![gorm-cli](./gorm-cli.png)
 
 # gorm-cli
-The cli tool for gorm. Such as migration, seed.
+The cli tool for [gorm ORM](https://gorm.io/). Such as migration, seed.
 
 Currently, [gorm-cli](https://github.com/iKala/gorm-cli) supports two dialect: `mysql` and `postgres`.
 
