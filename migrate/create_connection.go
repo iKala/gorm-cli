@@ -2,11 +2,10 @@ package migrate
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"text/template"
-
-	"github.com/pkg/errors"
 )
 
 type tmplData struct {
@@ -61,7 +60,7 @@ func NewDB() (*gorm.DB, error) {
 		connectionFileStringBuffer.Bytes(),
 		os.ModePerm,
 	); err != nil {
-		return "", errors.Wrap(err, "Create connection failed.")
+		return "", fmt.Errorf("%v (%v)", "Create connection failed.", err.Error())
 	}
 
 	if err := RemovePlugin(targetFileName); err != nil {
@@ -74,7 +73,7 @@ func NewDB() (*gorm.DB, error) {
 
 	if os.Getenv("DEBUG_CONNECTION") != "true" {
 		if err := os.Remove(tmpFile); err != nil {
-			return "", errors.Wrap(err, "Remove temp file failed")
+			return "", fmt.Errorf("%v (%v)", "Remove temp file failed", err.Error())
 		}
 	}
 
