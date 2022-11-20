@@ -16,11 +16,10 @@ func TestMain(m *testing.M) {
 	t := MigrationTargetFolder + "/" + n
 
 	f, err := os.Create(t)
-	defer f.Close()
-
 	if err != nil {
 		panic(err)
 	}
+	defer f.Close()
 
 	if _, err := f.WriteString("package main"); err != nil {
 		panic(err)
