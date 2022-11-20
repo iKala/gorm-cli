@@ -14,6 +14,8 @@ type GormCliConfig struct {
 		Password string
 		Dbname   string
 		Charset  string
+		SSLMode  string
+		TimeZone string
 	}
 	Migration struct {
 		Path string
