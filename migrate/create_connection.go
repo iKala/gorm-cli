@@ -39,7 +39,7 @@ import (
 
 // NewDB - Get gorm DB instance.
 func NewDB() (*gorm.DB, error) {
-	dsn := "{{.DB.User}}:{{.DB.Password}}@tcp({{.DB.Host}}:{{.Port}})/{{.DB.Dbname}}?charset={{.DB.Charset}}&parseTime=True&loc=Local"
+	dsn := "{{.DB.User}}:{{.DB.Password}}@tcp({{.DB.Host}}:{{.DB.Port}})/{{.DB.Dbname}}?charset={{.DB.Charset}}&parseTime=True&loc=Local"
 	db, err := gorm.Open({{.DB.Dialects}}.Open(dsn), &gorm.Config{})
 	return db, err
 }`
