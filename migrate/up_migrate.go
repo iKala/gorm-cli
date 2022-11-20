@@ -12,6 +12,10 @@ import (
 
 // UpMigrate - Run migration
 func UpMigrate(db *gorm.DB, files []os.FileInfo) error {
+	if len(files) == 0 {
+		return ErrNoMigration
+	}
+
 	for i, file := range files {
 		if file.Name() == "connection.so" || (!strings.HasSuffix(file.Name(), ".go") && !strings.HasSuffix(file.Name(), ".so")) {
 			continue
