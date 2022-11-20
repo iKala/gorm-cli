@@ -40,10 +40,12 @@ func main() {
 	}
 	// Load file without error, replace setting value with yaml config.
 	if err == nil {
+		fmt.Println("==> load gorm-cli.yaml")
 		if err := yaml.Unmarshal(bytes, &c); err != nil {
 			fmt.Println("Failed to parse .gorm-cli.yaml, might be syntax error. https://github.com/iKala/gorm-cli/blob/master/.gorm-cli.yaml")
 			return
 		}
+		fmt.Println(c)
 	}
 
 	migrate.MigrationTargetFolder = c.Migration.Path
@@ -94,8 +96,16 @@ func main() {
 		return
 	}
 
+	forceRebuild := false
+	for _, arg := range os.Args {
+		if arg == "-f" {
+			forceRebuild = true
+			break
+		}
+	}
+
 	rollbackStep := int64(-1)
-	if migrateAction == "db:rollback" && len(os.Args) == 3 {
+	if migrateAction == "db:rollback" && len(os.Args) >= 3 && os.Args[2] != "-f" {
 		argStep, err := strconv.ParseInt(os.Args[2], 10, 64)
 		if err != nil {
 			fmt.Println("Wrong option format at args[2] - Rollback step needs to be a integer number.", err)
@@ -114,15 +124,31 @@ func main() {
 		}
 	}
 
-	// Read prebuilt plugins first.
-	files, _ := ioutil.ReadDir(migrate.MigrationTargetFolder + "/.plugins")
-	if len(files) == 0 {
-		var err error
-		// Load go file when prebuilt plugins not exists.
-		files, err = ioutil.ReadDir(migrate.MigrationTargetFolder)
-		if err != nil {
-			fmt.Println("Migration folder not exists.")
-			return
+	// Get migrations
+	files, err := ioutil.ReadDir(migrate.MigrationTargetFolder)
+	if err != nil {
+		fmt.Println("Migration folder not exists.")
+		return
+	}
+
+	for i, file := range files {
+		if file.IsDir() {
+			continue
+		}
+
+		// Replace the migration file info when the `.so` file exists.
+		builtFileName := strings.Replace(file.Name(), ".go", ".so", -1)
+		builtFilePath := migrate.MigrationTargetFolder + "/.plugins/" + builtFileName
+		if builtFile, err := os.Stat(builtFilePath); err == nil {
+			// Remove built file
+			if forceRebuild {
+				if err := os.Remove(builtFilePath); err != nil {
+					fmt.Println(err)
+					return
+				}
+			} else {
+				files[i] = builtFile
+			}
 		}
 	}
 
