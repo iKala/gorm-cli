@@ -10,8 +10,6 @@ import (
 
 type tmplData struct {
 	GormCliConfig
-	DialectString string
-	Port          string
 }
 
 // CreateConnection - Create the migration file with template.
@@ -19,29 +17,39 @@ func CreateConnection(c GormCliConfig) (string, error) {
 	// Create migration folder anyway.
 	_ = os.Mkdir(MigrationTargetFolder, os.ModePerm)
 
+	dialectString := ""
+	dsn := ""
+
 	data := tmplData{GormCliConfig: c}
-	if c.DB.Dialects == "mysql" {
-		data.DialectString = `"gorm.io/driver/mysql"`
+	switch c.DB.Dialects {
+	case "mysql":
+		dialectString = `"gorm.io/driver/mysql"`
+		dsn = `"{{.DB.User}}:{{.DB.Password}}@tcp({{.DB.Host}}:{{.DB.Port}})/{{.DB.Dbname}}?charset={{.DB.Charset}}&parseTime=True&loc=Local"`
+	case "postgres":
+		if data.DB.TimeZone == "" {
+			data.DB.TimeZone = "UTC"
+		}
+		if data.DB.SSLMode == "" {
+			data.DB.SSLMode = "disable"
+		}
+		dialectString = `"gorm.io/driver/postgres"`
+		dsn = `"host=({{.DB.Host}} user={{.DB.User}} password={{.DB.Password}} dbname={{.DB.Dbname}} port={{.DB.Port}} sslmode={{.DB.SSLMode}} TimeZone={{.DB.TimeZone}}"`
 	}
 
-	if c.DB.Port == "" {
-		data.Port = "3306"
-	}
-
-	connectionTemplate :=
+	connectionTemplate := fmt.Sprintf(
 		`package main
 
 import (
 	"gorm.io/gorm"
-	{{.DialectString}}
+	%v
 )
 
 // NewDB - Get gorm DB instance.
 func NewDB() (*gorm.DB, error) {
-	dsn := "{{.DB.User}}:{{.DB.Password}}@tcp({{.DB.Host}}:{{.DB.Port}})/{{.DB.Dbname}}?charset={{.DB.Charset}}&parseTime=True&loc=Local"
+	dsn := %v
 	db, err := gorm.Open({{.DB.Dialects}}.Open(dsn), &gorm.Config{})
 	return db, err
-}`
+}`, dialectString, dsn)
 
 	tmpl, err := template.New("connection").Parse(connectionTemplate)
 	if err != nil {
