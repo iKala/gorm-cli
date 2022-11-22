@@ -1,12 +1,12 @@
 ![gorm-cli](./gorm-cli.png)
 
 # gorm-cli
-The cli tool for [gorm ORM](https://gorm.io/). Such as migration, seed.
+The CLI tool for [gorm ORM](https://gorm.io/). Such as migration, and seed.
 
-Currently, [gorm-cli](https://github.com/iKala/gorm-cli) supports two dialect: `mysql` and `postgres`.
+Currently, [gorm-cli](https://github.com/iKala/gorm-cli) supports two dialects: `mysql` and `postgres`.
 
 ## How gorm-cli works
-[gorm-cli](https://github.com/iKala/gorm-cli) maintains a table - `gorm_meta` to record the migration execution history. Support developers to keep the DB migration in code, and easy to rollback.
+[gorm-cli](https://github.com/iKala/gorm-cli) maintains a table - `gorm_meta` to record the migration execution history. Support developers to keep the DB migration in code, and easy to roll back.
 
 ## Installation
 ```shell
@@ -27,7 +27,7 @@ export PATH=$PATH:$(go env GOPATH)/bin
 ## Initialization
 First, prepare your connection settings.
 
-[gorm-cli](https://github.com/iKala/gorm-cli) will load the gorm drivers automatically to supports various dialect such as `mysql`, `postgres`...like `gorm` do, but you need to install the drive yourself.
+[gorm-cli](https://github.com/iKala/gorm-cli) will load the gorm drivers automatically to support various dialects such as `mysql`, `postgres`...like `gorm` do, but you need to install the drive yourself.
 
 ```shell
 # Get the mysql driver when you use the mysql dialect.
@@ -95,7 +95,7 @@ migration:
 $ db:create_migration create_user
 Migration created. ./migration/20221120125320_create_user.go
 
-# The empty migration will be created at the migration folder you configured.
+# The empty migration will be created in the migration folder you configured.
 ```
 
 Since we're building migrations on top of gorm, you should check the gorm's doc to know what you need. [Toturials - Migration](https://gorm.io/docs/migration.html)
@@ -107,20 +107,20 @@ Here are some examples
 package main
 
 import (
-	"github.com/foo/bar/model"
-	"gorm.io/gorm"
+  "github.com/foo/bar/model"
+  "gorm.io/gorm"
 )
 
 type migration string
 
 // Up - Changes for the migration.
 func (m migration) Up(db *gorm.DB) error {
-	return db.AutoMigrate(&model.User{})
+  return db.AutoMigrate(&model.User{})
 }
 
 // Down - Rollback changes for the migration.
 func (m migration) Down(db *gorm.DB) error {
-	return db.Migrator().DropTable(&model.User{})
+  return db.Migrator().DropTable(&model.User{})
 }
 
 var Migration migration
@@ -131,8 +131,8 @@ var Migration migration
 package main
 
 import (
-	"github.com/foo/bar/model"
-	"gorm.io/gorm"
+  "github.com/foo/bar/model"
+  "gorm.io/gorm"
 )
 
 type migration string
@@ -140,41 +140,41 @@ type migration string
 // Up - Changes for the migration.
 func (m migration) Up(db *gorm.DB) error {
   return db.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Exec("INSERT INTO tag_type_weights (type, weight) VALUES (?, ?)", model.TagTypeCharacter, 1.6).Error; err != nil {
-			return err
-		}
-		if err := tx.Exec("INSERT INTO tag_type_weights (type, weight) VALUES (?, ?)", model.TagTypeCopyright, 1.4).Error; err != nil {
-			return err
-		}
-		if err := tx.Exec("INSERT INTO tag_type_weights (type, weight) VALUES (?, ?)", model.TagTypeArtist, 1.3).Error; err != nil {
-			return err
-		}
-		if err := tx.Exec("INSERT INTO tag_type_weights (type, weight) VALUES (?, ?)", model.TagTypeGeneral, 1.1).Error; err != nil {
-			return err
-		}
+    if err := tx.Exec("INSERT INTO tag_type_weights (type, weight) VALUES (?, ?)", model.TagTypeCharacter, 1.6).Error; err != nil {
+      return err
+    }
+    if err := tx.Exec("INSERT INTO tag_type_weights (type, weight) VALUES (?, ?)", model.TagTypeCopyright, 1.4).Error; err != nil {
+      return err
+    }
+    if err := tx.Exec("INSERT INTO tag_type_weights (type, weight) VALUES (?, ?)", model.TagTypeArtist, 1.3).Error; err != nil {
+      return err
+    }
+    if err := tx.Exec("INSERT INTO tag_type_weights (type, weight) VALUES (?, ?)", model.TagTypeGeneral, 1.1).Error; err != nil {
+      return err
+    }
 
-		return nil
-	})
+    return nil
+  })
 }
 
 // Down - Rollback changes for the migration.
 func (m migration) Down(db *gorm.DB) error {
-	return db.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Exec("DELETE FROM tag_type_weights WHERE type = ? AND weight = ?", model.TagTypeCharacter, 1.6).Error; err != nil {
-			return err
-		}
-		if err := tx.Exec("DELETE FROM tag_type_weights WHERE type = ? AND weight = ?", model.TagTypeCopyright, 1.4).Error; err != nil {
-			return err
-		}
-		if err := tx.Exec("DELETE FROM tag_type_weights WHERE type = ? AND weight = ?", model.TagTypeArtist, 1.3).Error; err != nil {
-			return err
-		}
-		if err := tx.Exec("DELETE FROM tag_type_weights WHERE type = ? AND weight = ?", model.TagTypeGeneral, 1.1).Error; err != nil {
-			return err
-		}
+  return db.Transaction(func(tx *gorm.DB) error {
+    if err := tx.Exec("DELETE FROM tag_type_weights WHERE type = ? AND weight = ?", model.TagTypeCharacter, 1.6).Error; err != nil {
+      return err
+    }
+    if err := tx.Exec("DELETE FROM tag_type_weights WHERE type = ? AND weight = ?", model.TagTypeCopyright, 1.4).Error; err != nil {
+      return err
+    }
+    if err := tx.Exec("DELETE FROM tag_type_weights WHERE type = ? AND weight = ?", model.TagTypeArtist, 1.3).Error; err != nil {
+      return err
+    }
+    if err := tx.Exec("DELETE FROM tag_type_weights WHERE type = ? AND weight = ?", model.TagTypeGeneral, 1.1).Error; err != nil {
+      return err
+    }
 
-		return nil
-	})
+    return nil
+  })
 }
 
 var Migration migration
@@ -191,7 +191,7 @@ $ gorm-cli db:rollback
 ✔ Are you sure to rollback the migration with all steps? (Yes/No):
 ```
 
-[gorm-cli](https://github.com/iKala/gorm-cli) will compile the migrations into `.so` files and cache them at `.plugins` folder. Once the `.so` file built, [gorm-cli](https://github.com/iKala/gorm-cli) will not change it unless the `-f` flag applied.
+[gorm-cli](https://github.com/iKala/gorm-cli) will compile the migrations into `.so` files and cache them at `.plugins` folder. Once the `.so` file built, [gorm-cli](https://github.com/iKala/gorm-cli) will not change it unless the `-f` flag is applied.
 
 ```shell
 # The `-f` flag to force rebuild the `.so` file, it's useful when you're testing and need to retry.
@@ -263,6 +263,6 @@ $ docker run --rm gorm-cli-migration
 
 ---
 
-## Thanks for all of you guys like this project
+## Thanks for all of you guys liking this project
 It's very welcome to give your PRs to make this little tool much easier to use. 🙂
 
