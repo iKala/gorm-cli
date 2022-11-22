@@ -11,6 +11,10 @@ import (
 
 // DownMigration - Rollback migration
 func DownMigration(db *gorm.DB, files []os.FileInfo, step int64) error {
+	if len(files) == 0 {
+		return ErrNoMigration
+	}
+
 	stepMessage := strconv.Itoa(int(step))
 	if step == -1 {
 		stepMessage = "all"

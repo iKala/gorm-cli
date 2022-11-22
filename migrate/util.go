@@ -21,8 +21,9 @@ func checkPluginExists(pluginName string) bool {
 	return !os.IsNotExist(err)
 }
 
-func BuildPlugin(goFileName string) (string, error) {
-	pluginName := strings.Replace(goFileName, ".go", ".so", -1)
+func BuildPlugin(fileName string) (string, error) {
+	goFileName := strings.Replace(fileName, ".so", ".go", -1)
+	pluginName := strings.Replace(fileName, ".go", ".so", -1)
 
 	// Skip build plugin when exists.
 	if checkPluginExists(pluginName) {

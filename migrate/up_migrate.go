@@ -12,12 +12,19 @@ import (
 
 // UpMigrate - Run migration
 func UpMigrate(db *gorm.DB, files []os.FileInfo) error {
+	if len(files) == 0 {
+		return ErrNoMigration
+	}
+
 	for i, file := range files {
 		if file.Name() == "connection.so" || (!strings.HasSuffix(file.Name(), ".go") && !strings.HasSuffix(file.Name(), ".so")) {
 			continue
 		}
+
+		migrationName := strings.Replace(file.Name(), ".go", ".so", -1)
+
 		var meta GormMeta
-		err := db.Where(&GormMeta{Name: file.Name()}).First(&meta).Error
+		err := db.Where(&GormMeta{Name: migrationName}).First(&meta).Error
 
 		// Execute the migration when the record not found.
 		if err == nil {
@@ -42,8 +49,8 @@ func UpMigrate(db *gorm.DB, files []os.FileInfo) error {
 			return fmt.Errorf("%v (%v)", "Migrate failed."+file.Name(), err.Error())
 		}
 
-		fmt.Println("Migrated.", i, file.Name())
-		if err := db.Create(&GormMeta{Name: file.Name()}).Error; err != nil {
+		fmt.Println("Migrated.", i, migrationName)
+		if err := db.Create(&GormMeta{Name: migrationName}).Error; err != nil {
 			return err
 		}
 	}
