@@ -1,5 +1,7 @@
 ![gorm-cli](./gorm-cli.png)
 
+Online doc: https://gorm-cli.bugfree.app
+
 # gorm-cli
 The CLI tool for [gorm ORM](https://gorm.io/). Such as migration, and seed.
 
