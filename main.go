@@ -40,12 +40,10 @@ func main() {
 	}
 	// Load file without error, replace setting value with yaml config.
 	if err == nil {
-		fmt.Println("==> load gorm-cli.yaml")
 		if err := yaml.Unmarshal(bytes, &c); err != nil {
 			fmt.Println("Failed to parse .gorm-cli.yaml, might be syntax error. https://github.com/iKala/gorm-cli/blob/master/.gorm-cli.yaml")
 			return
 		}
-		fmt.Println(c)
 	}
 
 	migrate.MigrationTargetFolder = c.Migration.Path
