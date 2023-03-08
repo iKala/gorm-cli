@@ -33,7 +33,7 @@ func CreateConnection(c GormCliConfig) (string, error) {
 			data.DB.SSLMode = "disable"
 		}
 		dialectString = `"gorm.io/driver/postgres"`
-		dsn = `"host=({{.DB.Host}} user={{.DB.User}} password={{.DB.Password}} dbname={{.DB.Dbname}} port={{.DB.Port}} sslmode={{.DB.SSLMode}} TimeZone={{.DB.TimeZone}}"`
+		dsn = `"host={{.DB.Host}} user={{.DB.User}} password={{.DB.Password}} dbname={{.DB.Dbname}} port={{.DB.Port}} sslmode={{.DB.SSLMode}} TimeZone={{.DB.TimeZone}}"`
 	}
 
 	connectionTemplate := fmt.Sprintf(
