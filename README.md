@@ -104,7 +104,7 @@ Since we're building migrations on top of gorm, you should check the gorm's doc 
 
 Here are some examples
 
-### Create table via model declearation.
+### Create table via model declaration.
 ```go
 package main
 
